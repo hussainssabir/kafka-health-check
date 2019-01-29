@@ -60,7 +60,19 @@ func (check *HealthCheck) CheckHealth(brokerUpdates chan<- Update, clusterUpdate
 	if err != nil {
 		return
 	}
-	defer check.closeConnection(manageTopic)
+
+	/**
+	   	* 	Updated by Hussain:
+	    *	TODO: Revisit to handle this properly
+	    *   In our design, if the node is being terminated we don't really need to close the connection.
+		* 	The closeConnection method deletes the health check topics . The deletion process actually informs the Zookeeper about it which
+		* 	eventually deletes these topics. We have noticed during testing that the ASG terminates the node before it can even delete these topics from its
+		* 	metadata. In our TA design, we attach the same EBS again to the new nodes. The zookeeper on these new nodes reuses the metadata from its previous life,
+		* 	which contains information about the health check topics marked for deletion but not actually deleted. Due to this partially deleted state, health check process fails
+		* 	to connect to its topics on the new healthy kafka nodes.
+	*/
+
+	// defer check.closeConnection(manageTopic)
 
 	reportUnhealthy := func(err error) {
 		log.Println("metadata could not be retrieved, assuming broker unhealthy:", err)

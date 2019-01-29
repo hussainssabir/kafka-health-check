@@ -20,7 +20,7 @@ func Test_checkHealth_WhenBrokerInMetadataAndProducedMessageIsConsumed_ReportsHe
 	connection.EXPECT().Consumer(gomock.Any()).Return(check.consumer, nil)
 	connection.EXPECT().Producer(gomock.Any()).Return(check.producer)
 	connection.EXPECT().Metadata().Return(healthyMetadata(check.config.topicName, check.config.replicationTopicName), nil).AnyTimes()
-	connection.EXPECT().Close()
+	//connection.EXPECT().Close()
 	zk.mockHealthyMetadata(check.config.topicName, check.config.replicationTopicName)
 
 	brokerUpdates := make(chan Update)
